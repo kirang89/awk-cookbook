@@ -1,0 +1,115 @@
+#+LaTeX_CLASS: article
+#+LaTeX_HEADER: \usepackage[T1]{fontenc}
+#+LaTeX_HEADER: \usepackage{libertine}
+#+LaTeX_HEADER: \renewcommand*\oldstylenums[1]{{\fontfamily{fxlj}\selectfont #1}}
+#+LaTeX_HEADER: \usepackage{lmodern}
+#+LaTeX_HEADER: \usepackage{minted}
+#+LaTeX_HEADER: \usemintedstyle{emacs}
+#+LaTeX_HEADER: \newminted{bash}{fontsize=\footnotesize}
+
+#+LaTeX_HEADER:\usepackage{titlesec}
+#+LaTeX_HEADER:\titlespacing*{\section}
+#+LaTeX_HEADER:{0pt}{5.5ex plus 1ex minus .2ex}{4.3ex plus .2ex}
+#+LaTeX_HEADER:    \vspace*{\stretch{4.0}}\titlespacing*{\subsection}
+#+LaTeX_HEADER:{0pt}{5.5ex plus 1ex minus .2ex}{4.3ex plus .2ex}
+
+#+LaTeX_HEADER: \begin{titlepage}
+#+LaTeX_HEADER:    \vspace*{\stretch{1.0}}
+#+LaTeX_HEADER:    \begin{center}
+#+LaTeX_HEADER:       \Huge\textbf{AWK Cookbook}\\
+#+LaTeX_HEADER:       \large\textit{Kiran Gangadharan}
+#+LaTeX_HEADER:    \end{center}
+#+LaTeX_HEADER:    \vspace*{\stretch{2.0}}
+#+LaTeX_HEADER: \end{titlepage}
+
+* Recipes
+** Count lines in a file
+
+#+BEGIN_SRC sh
+awk 'END { print NR }'
+#+END_SRC
+
+** Count no of words in a file
+
+#+BEGIN_SRC sh
+awk '{ total = total + NF } END { print total }'
+#+END_SRC
+
+** Find sum of columns for each row
+
+#+BEGIN_SRC sh
+awk '{s=0; for (i=1; i<=NF; i++) s=s+$i; print s}'
+#+END_SRC
+
+** Find and replace in file
+
+#+BEGIN_SRC sh
+# Replace only first instance in line
+awk '{sub(/HTML/, "html")}; 1' data.txt > data_new.txt
+
+# Replace all instances in line
+awk '{gsub(/HTML/, "html")}; 1' data.txt > data_new.txt
+#+END_SRC
+
+** Remove duplicate lines from a file
+
+#+BEGIN_SRC sh
+awk '!a[$0]++' data.txt
+#+END_SRC
+
+** Print all lines containing "Programming"
+
+#+BEGIN_SRC sh
+awk '/Programming/ { n++ }; END { print n+0 }'
+#+END_SRC
+
+** Prefixing line with increasing number
+
+#+BEGIN_SRC sh
+awk '{print FNR ". " $0}' data.txt
+#+END_SRC
+
+** Print account name and role from /etc/passwd
+
+#+BEGIN_SRC sh
+awk -F : '/^[^(#|_)]/ {print $1, "=>", $5}' /etc/passwd
+#+END_SRC
+
+** Find the line containing largest value in the first column
+
+#+BEGIN_SRC sh
+awk '$1 > max {max=$1; maxline=$0}; END{ print maxline}' data.txt
+#+END_SRC
+
+** Swap first two columns of every line
+
+#+BEGIN_SRC sh
+awk '{temp=$1; $1=$2; $2=temp} 1' data.txt
+#+END_SRC
+
+** Delete second column from every line
+
+#+BEGIN_SRC sh
+awk '{ $2 = ""; print }' data.txt
+#+END_SRC
+
+** Perform search similar to SQL 'where'
+
+#+BEGIN_SRC sh
+awk '$2 == "hello"' data.txt
+#+END_SRC
+** Delete leading whitespace from each line
+
+#+BEGIN_SRC sh
+awk '{sub(/^[ \t]+/, ""); print}'
+#+END_SRC
+** Delete trailing whitespace from each line
+
+#+BEGIN_SRC sh
+awk '{sub(/[ \t]+$/, ""); print}'
+#+END_SRC
+** Replace all instances of "foo" with "bar"
+
+#+BEGIN_SRC sh
+awk '{gsub(/foo/,"bar");print}'
+#+END_SRC
